@@ -67,6 +67,13 @@ router.get('/register', (req, res) => {
   });
 });
 
+// show register official form
+router.get('/register-official', (req, res) => {
+  res.render('register-official', {
+    page: 'register-official',
+  });
+});
+
 //handle sign up logic
 router.post('/register', upload.single('image'), async (req, res) => {
   let result, profileImage, profileImageId;
@@ -98,6 +105,42 @@ router.post('/register', upload.single('image'), async (req, res) => {
     newUser.shareEmail = true;
   }
 
+  if (req.query.page && req.query.page === 'register-official') {
+    newUser.isOfficial = true;
+    newUser.officialCampgroundName = req.body.campgroundName;
+    newUser.officialCampgroundJIB = req.body.campgroundJIB;
+
+    const admins = await User.find({
+      isAdmin: true,
+    });
+
+    if (admins.length) {
+      let reject = true;
+      if (process.env.REJECTUNAUTHORIZED && process.env.REJECTUNAUTHORIZED === 'false') {
+        reject = false;
+      }
+      const smtpTransport = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+          user: 'ajdin.komic12@gmail.com',
+          pass: process.env.MAILPW,
+        },
+        tls: {
+          rejectUnauthorized: reject,
+        },
+      });
+      for (const admin of admins) {
+        const mailOptions = {
+          to: admin.email,
+          from: 'ajdin.komic12@gmail.com',
+          subject: 'Kampiraj u BiH | Novi službeni korisnik',
+          text: `Poštovani/a, ${admin.firstName}\n\nObavještavamo Vas da je registrovan novi službeni korisnik sa sljedećim podacima:\nIme i prezime: ${newUser.firstName} ${newUser.lastName}\nNaziv kampa: ${newUser.officialCampgroundName}\nJIB kampa: ${newUser.officialCampgroundJIB}\n\nUkoliko želite potvrditi ovog službenog korisnika, molimo kliknite na sljedeću poveznicu: https://${req.headers.host}/confirm-user/${newUser.username}.\n`,
+        };
+        smtpTransport.sendMail(mailOptions);
+      }
+    }
+  }
+
   User.register(newUser, req.body.password, (err, user) => {
     if (err) {
       return res.render('register', {
@@ -110,6 +153,41 @@ router.post('/register', upload.single('image'), async (req, res) => {
       res.redirect('/campgrounds');
     });
   });
+});
+
+// confirm official user
+router.get('/confirm-user/:username', async (req, res) => {
+  const user = await User.findOne({ username: req.params.username });
+
+  if (user) {
+    user.isConfirmed = true;
+    await user.save();
+
+    let reject = true;
+    if (process.env.REJECTUNAUTHORIZED && process.env.REJECTUNAUTHORIZED === 'false') {
+      reject = false;
+    }
+    const smtpTransport = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+        user: 'ajdin.komic12@gmail.com',
+        pass: process.env.MAILPW,
+      },
+      tls: {
+        rejectUnauthorized: reject,
+      },
+    });
+    const mailOptions = {
+      to: user.email,
+      from: 'ajdin.komic12@gmail.com',
+      subject: 'Kampiraj u BiH | Potvrda službenog korisnika',
+      text: `Poštovani/a, ${user.firstName}\n\nObavještavamo Vas da ste potvrđeni kao službeni korisnik kampa ${user.officialCampgroundName}. Ugodno korištenje aplikacije Kampiraj u BiH!`,
+    };
+    smtpTransport.sendMail(mailOptions);
+  }
+
+  req.flash('success', `Uspješno ste potvrdili službenog korisnika: ${user.username}`);
+  res.redirect('/campgrounds');
 });
 
 // show login form

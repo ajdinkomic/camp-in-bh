@@ -10,7 +10,7 @@ const express = require('express'),
   axios = require('axios'),
   stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-const { isLoggedIn, checkCampgroundOwnership } = require('../middleware'); // if we require folder it requires automatically file named index.js
+const { isLoggedIn, isOfficialUser, isOfficialUserConfirmed, checkCampgroundOwnership } = require('../middleware'); // if we require folder it requires automatically file named index.js
 
 // multer config
 const storage = multer.diskStorage({
@@ -112,7 +112,7 @@ router.get('/', (req, res) => {
 });
 
 // CREATE - add new campground to DB
-router.post('/', isLoggedIn, upload.single('image'), async (req, res) => {
+router.post('/', isOfficialUserConfirmed, upload.single('image'), async (req, res) => {
   try {
     let result = req.file ? await cloudinary.uploader.upload(req.file.path) : null;
 
@@ -183,7 +183,7 @@ router.post('/', isLoggedIn, upload.single('image'), async (req, res) => {
 });
 
 // NEW - show form to create new campground
-router.get('/new', isLoggedIn, (req, res) => {
+router.get('/new', isOfficialUser, (req, res) => {
   res.render('campgrounds/new');
 });
 
@@ -338,14 +338,14 @@ router.get('/:slug', (req, res) => {
 });
 
 // EDIT CAMPGROUND ROUTE
-router.get('/:slug/edit', isLoggedIn, checkCampgroundOwnership, (req, res) => {
+router.get('/:slug/edit', isOfficialUser, checkCampgroundOwnership, (req, res) => {
   res.render('campgrounds/edit', {
     campground: req.campground,
   });
 });
 
 // UPDATE CAMPGROUND ROUTE
-router.put('/:slug', isLoggedIn, checkCampgroundOwnership, upload.single('image'), async (req, res) => {
+router.put('/:slug', isOfficialUserConfirmed, checkCampgroundOwnership, upload.single('image'), async (req, res) => {
   delete req.body.campground.rating;
   let campground = req.campground; // campground returned from checkCampgroundOwnership in middleware/index
 
@@ -427,7 +427,7 @@ router.get('/favorites/:slug', isLoggedIn, async (req, res) => {
 });
 
 // DESTROY CAMPGROUND ROUTE
-router.delete('/:slug', isLoggedIn, checkCampgroundOwnership, async (req, res) => {
+router.delete('/:slug', isOfficialUserConfirmed, checkCampgroundOwnership, async (req, res) => {
   let campground = req.campground; // campground returned from checkCampgroundOwnership in middleware/index
 
   try {

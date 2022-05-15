@@ -31,6 +31,16 @@ const mongoose = require("mongoose"),
             type: Boolean,
             default: false
         },
+        isOfficial: {
+            type: Boolean,
+            default: false
+        },
+        isConfirmed: {
+            type: Boolean,
+            default: false
+        },
+        officialCampgroundName: String,
+        officialCampgroundJIB: Number,
         notifications: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: "Notification"
