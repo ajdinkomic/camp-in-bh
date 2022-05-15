@@ -1,0 +1,59 @@
+<% include ../partials/header %>
+<section id="new-campground-section">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-12 text-center mt-5">
+                <h1>Novi kamp</h1>
+            </div>
+            <div class="col-lg-8 offset-lg-2 mt-4">
+                <form action="/campgrounds" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="name">Naziv kampa</label>
+                        <input type="text" class="form-control" id="name" placeholder="Kamp" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="street">Adresa</label>
+                        <input class="form-control" type="text" name="street" id="street"
+                            placeholder="Ulica" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="streetNumber">Broj ulice</label>
+                        <input class="form-control" type="text" name="streetNumber" id="streetNumber"
+                            placeholder="bb" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="city">Grad</label>
+                        <input class="form-control" type="text" name="city" id="city"
+                            placeholder="Sarajevo" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="postalCode">Poštanski broj</label>
+                        <input class="form-control" type="text" name="postalCode" id="postalCode"
+                            placeholder="71000" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Cijena noćenja (KM)</label>
+                        <input type="number" class="form-control" placeholder="9.99" name="price" id="price" min="0"
+                            step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="image">Slika</label>
+                        <input type="file" name="image" id="image" accept="image/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Opis</label>
+                        <textarea name="description" type="text" placeholder="Upišite opis kampa."
+                            id="description" cols="30" rows="5" class="form-control" required></textarea>
+                    </div>
+                    <div class="form-group mt-5">
+                        <button class="btn btn-custom btn-greenish-full btn-block">Objavi kamp</button>
+                    </div>
+                </form>
+                <div class="text-center">
+                    <a href="/campgrounds">Nazad na kampove</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<% include ../partials/footer-scripts-only %>

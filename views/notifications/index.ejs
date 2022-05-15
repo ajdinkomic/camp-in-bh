@@ -1,0 +1,42 @@
+  <% include ../partials/header %>
+  <section id="notifications-index-section">
+    <div class="container pt-5">
+      <div class="row">
+        <div class="col-12 mt-5 text-center">
+          <h1>Obavijesti</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12 mt-4">
+          <ul class="list-group">
+            <% if (unreadNotifications && unreadNotifications.length>0) { %>
+            <h3>Novo</h3>
+            <% for (const notification of unreadNotifications.slice(0,2)) { %>
+            <li class="list-group-item mb-2 rounded">
+              <a href="/notifications/<%= notification.id %>">
+                <%= notification.text %> %>
+              </a>
+              <p class="text-right"><%= moment(notification.createdAt).format('DD.MM.YYYY.') %> <small><%= notification.createdAt.toLocaleTimeString().slice(0,-3) %></small></p>
+            </li>
+            <% } %>
+            <% } %>
+
+            <% if (notifications && notifications.length>0) { %>
+            <h3>Pročitano</h3>
+            <% } %>
+
+            <% for (const notification of notifications.slice(0,1)) { %>
+            <li class="list-group-item mb-2 rounded">
+              <a href="<%= notification.link %>">
+                <%= notification.text %> %>
+              </a>
+              <p class="text-right"><%= moment(notification.createdAt).format('DD.MM.YYYY.') %> <small><%= notification.createdAt.toLocaleTimeString().slice(0,-3) %></small></p>
+            </li>
+            <% } %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <% include ../partials/footer-scripts-only %>

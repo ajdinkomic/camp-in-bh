@@ -1,0 +1,190 @@
+<% include ../partials/header %>
+
+    <section id="campgrounds-favorites-section">
+        <div class="container pt-5">
+            <div class="row">
+                <div class="col-12 mt-5 text-center">
+                    <h1>Favoriti</h1>
+                    <div class="search" <% if(campgrounds.length < 1) { %> style="opacity:0;pointer-events:none;" <% } %> >
+                            <form action="/campgrounds/favorites" method="GET" class="form-inline justify-content-center">
+                                <!-- GET in this case when we submit instead of req.body information will be in req.query-->
+                                <div class="form-group">
+                                    <input type="text" class="form-control" id="search" name="search"
+                                        placeholder="Pretraga..." <% if(search){ %> value="<%=search%>" <% } %> />
+                                            <button type="submit"
+                                                class="form-control form-inline my-1 m-sm-2 btn btn-custom btn-greenish-full">
+                                                <i class="fas fa-search"></i></button>
+                                </div>
+                            </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="index-campgrounds">
+        <div class="container mt-5 all-campgrounds-container">
+            <div class="row">
+                <% if(campgrounds.length < 1) { %>
+                    <div class="col-md-12 text-center">
+                        <h1 class="mt-3">Nisu pronađeni kampovi za Vašu pretragu!</h1>
+                        <h3 class="mt-5">Molimo, pokušajte ponovo s drugim parametrima</h3>
+                        <div class="search my-5">
+                            <form action="/campgrounds/favorites" method="GET"
+                                class="form-inline justify-content-center">
+                                <!-- GET in this case when we submit instead of req.body information will be in req.query-->
+                                <div class="form-group">
+                                    <input type="text" class="form-control" id="search" name="search"
+                                        placeholder="Pretraga..." <%if(search){%> value="<%=search%>" <%}%> />
+                                            <button type="submit"
+                                                class="form-control form-inline my-1 m-sm-2 btn btn-custom btn-greenish-full"><i
+                                                    class="fas fa-search"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <% } else { %>
+                        <% for(const campground of campgrounds){ %>
+                            <div class="col-lg-6 mb-4">
+                                <div class="card">
+                                    <% if(currentUser) { %>
+                                        <% if(currentUser.favorites.some(function(favorite){ return favorite.equals(campground.id) })) { %>
+                                            <a href="/campgrounds/favorites/remove/<%= campground.slug %>"
+                                                title="Ukloni iz favorita">
+                                                <i class="fa-heart fas text-danger"></i>
+                                            </a>
+                                            <% } else { %>
+                                                <a href="/campgrounds/favorites/<%= campground.slug %>"
+                                                    title="Dodaj u favorite">
+                                                    <i class="fa-heart far"></i>
+                                                </a>
+                                                <% } %>
+                                                    <% } %>
+                                                        <a href="/campgrounds/favorites/<%= campground.slug %>">
+                                                            <img src="<%= campground.image %>" class="card-img-top"
+                                                                alt="<%=campground.name%> slika.">
+                                                        </a>
+                                                        <div class="card-body">
+                                                            <h5 class="card-title">
+                                                                <%= campground.name.substring(0,40) %>
+                                                            </h5>
+                                                            <ul class="list-group list-group-flush">
+                                                                <li class="list-group-item border-top-0" title="Opis">
+                                                                    <p class="card-text"><i
+                                                                            class="fas fa-info-circle mr-1"></i>
+                                                                        <%= campground.description.substring(0,
+                                                                            40)+"..." %>
+                                                                    </p>
+                                                                </li>
+                                                                <li class="list-group-item" title="Datum objavljivanja">
+                                                                    <i class="fas fa-calendar-day mr-1"></i>
+                                                                    <%= moment(campground.createdAt).format('DD.MM.YYYY.') %>
+                                                                </li>
+                                                                <li class="list-group-item" title="Korisnik"><i
+                                                                        class="fas fa-user mr-1"></i><a
+                                                                        href="/users/<%= campground.author.username %>">
+                                                                        <%= campground.author.username %>
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+
+                                                            <% if (campground.rating===0) { %>
+                                                                <div class="card-text text-center pt-4 mb-1"><em>No
+                                                                        reviews yet</em>
+                                                                </div>
+                                                                <% } else { %>
+                                                                    <p class="card-text text-center pt-4 mb-1">
+                                                                        <span class="fas fa-star checked-star"></span>
+                                                                        <span
+                                                                            class="fas fa-star <% if (campground.rating >= 1.5) { %> checked-star <% } %>"></span>
+                                                                        <span
+                                                                            class="fas fa-star <% if (campground.rating >= 2.5) { %> checked-star <% } %>"></span>
+                                                                        <span
+                                                                            class="fas fa-star <% if (campground.rating >= 3.5) { %> checked-star <% } %>"></span>
+                                                                        <span
+                                                                            class="fas fa-star <% if (campground.rating >= 4.5) { %> checked-star <% } %>"></span>
+                                                                        <em>(<%= campground.reviews.length %>)</em>
+                                                                    </p>
+                                                                    <% } %>
+                                                                        <div class="text-center">
+                                                                            <a href="/campgrounds/favorites/<%= campground.slug %>"
+                                                                                class="btn btn-custom btn-greenish-full mt-1">More
+                                                                                info</a>
+                                                                        </div>
+                                                        </div>
+                                </div>
+                            </div>
+                            <% } %>
+                                <% } %>
+            </div>
+        </div>
+    </section>
+
+    <div class="container mb-5 mt-4">
+        <nav aria-label="Page navigation">
+            <% if (pages && pages> 0) { %>
+                <ul class="pagination justify-content-center">
+                    <% if (current==1) { %>
+                        <li class="page-item disabled"><a class="page-link">Početak</a></li>
+                        <% } else { %>
+                            <li><a class="page-link"
+                                    href="/campgrounds/favorites<%if(search){%>?search=<%=search%><%}%>">Početak</a></li>
+                            <% } %>
+
+                                <% if (current==1) { %>
+                                    <li class=" page-item disabled"><a class="page-link">«</a></li>
+                                    <% } else { %>
+                                        <li><a class="page-link"
+                                                href="/campgrounds/favorites?page=<%= Number(current) - 1 %><%if(search){%>&search=<%=search%><%}%>">«</a>
+                                        </li>
+                                        <% } %>
+
+                                            <% var i=(Number(current)> 5 ? Number(current) - 4 : 1) %>
+                                                <% if (i !==1) { %>
+                                                    <li class=" page-item disabled"><a class="page-link">...</a></li>
+                                                    <% } %>
+                                                        <% for (; i <=(Number(current) + 4) && i <=pages; i++) { %>
+                                                            <% if (i==current) { %>
+                                                                <li class="active"><a class="page-link">
+                                                                        <%= i %>
+                                                                    </a></li>
+                                                                <% } else { %>
+                                                                    <li><a class="page-link"
+                                                                            href="/campgrounds/favorites?page=<%= i %><%if(search){%>&search=<%=search%><%}%>">
+                                                                            <%= i %>
+                                                                        </a></li>
+                                                                    <% } %>
+                                                                        <% if (i==Number(current) + 4 && i < pages) { %>
+                                                                            <li class=" page-item disabled"><a
+                                                                                    class="page-link">...</a></li>
+                                                                            <% } %>
+                                                                                <% } %>
+
+                                                                                    <% if (current==pages) { %>
+                                                                                        <li class="page-item disabled">
+                                                                                            <a class="page-link">»</a>
+                                                                                        </li>
+                                                                                        <% } else { %>
+                                                                                            <li><a class="page-link"
+                                                                                                    href="/campgrounds/favorites?page=<%= Number(current) + 1 %><%if(search){%>&search=<%=search%><%}%>">»</a>
+                                                                                            </li>
+                                                                                            <% } %>
+
+                                                                                                <% if (current==pages) {
+                                                                                                    %>
+                                                                                                    <li
+                                                                                                        class=" page-item disabled">
+                                                                                                        <a
+                                                                                                            class="page-link">Kraj</a>
+                                                                                                    </li>
+                                                                                                    <% } else { %>
+                                                                                                        <li><a class="page-link"
+                                                                                                                href="/campgrounds/favorites?page=<%= pages %><%if(search){%>&search=<%=search%><%}%>">Kraj</a>
+                                                                                                        </li>
+                                                                                                        <% } %>
+                </ul>
+                <% } %>
+        </nav>
+    </div>
+
+    <% include ../partials/footer-scripts-only %>

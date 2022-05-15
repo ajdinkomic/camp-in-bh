@@ -1,0 +1,85 @@
+<% include ./partials/header %>
+<section id="register-page-section">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-12 text-center mt-5">
+                <h1>Registracija</h1>
+            </div>
+            <div class="col-lg-8 offset-lg-2 my-5">
+                <form action="/register" method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="username">Korisničko ime *</label>
+                        <input class="form-control" type="text" name="username" id="username" placeholder="korisnickoIme" pattern="^[a-z0-9_-]{4,10}$" title="Može sadržavati mala slova, brojeve i _ ili -. Minimalna dužina: 4 karaktera. Maksimalna dužina: 10 karaktera."
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Lozinka *</label>
+                        <input class="form-control" type="password" name="password" id="password" placeholder="Passw0rd!" pattern="^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$" title="Mora sadržavati minimalno jedno veliko slovo, jedno malo slovo, jedan broj i jedan specijalni karakter. Minimalna dužina: 8 karaktera."
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstName">Ime *</label>
+                        <input class="form-control" type="text" name="firstName" id="firstName" placeholder="Ime" pattern="[A-Za-z]{1,25}" title="Može sadržavati velika i mala slova. Minimalna dužina: 1 karakter. Maksimalna dužina: 25 karaktera."
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Prezime *</label>
+                        <input class="form-control" type="text" name="lastName" id="lastName" placeholder="Prezime" pattern="[A-Za-z]{1,25}" title="Može sadržavati velika i mala slova. Minimalna dužina: 1 karakter. Maksimalna dužina: 25 karaktera."
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail *</label>
+                        <input class="form-control" type="email" name="email" id="email" placeholder="email@primjer.com" title="Mora biti u formatu e-mail adrese"
+                            required>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" title="Podijelite svoju e-mail adresu kako bi Vas drugi korisnici mogli kontaktirati"
+                            id="shareEmail" name="shareEmail" value="share" type="checkbox">
+                        <label class="form-check-label" for="shareEmail">
+                            <small>Podijeli moju e-mail adresu s drugim korisnicima</small>
+                        </label>
+                    </div>
+                    <h4 class="mt-5">Dodatne informacije (opcionalno)</h4>
+                    <p><em>Napomena: Informacije koje unesete u ovoj sekciji su javno vidljive!</em></p>
+                    <div class="form-group">
+                        <label for="image">Profilna slika</label>
+                        <input type="file" name="image" id="image" accept="image/*">
+                    </div>
+                    <div class="form-group">
+                        <label for="facebook">Facebook</label>
+                        <input type="text" class="form-control" id="facebook" pattern="^https:\/\/facebook.com\/.*"
+                            placeholder="https://facebook.com/..." name="facebook">
+                    </div>
+                    <div class="form-group">
+                        <label for="youtube">Youtube</label>
+                        <input type="text" class="form-control" id="youtube"
+                            pattern="^https:\/\/youtube.com\/channel\/.*" placeholder="https://youtube.com/channel/..."
+                            name="youtube">
+                    </div>
+                    <div class="form-group">
+                        <label for="twitter">Twitter</label>
+                        <input type="text" class="form-control" id="twitter" pattern="^https:\/\/twitter.com\/.*"
+                            placeholder="https://twitter.com/..." name="twitter">
+                    </div>
+                    <div class="form-group">
+                        <label for="linkedIn">LinkedIn</label>
+                        <input type="text" class="form-control" id="linkedIn" pattern="^https:\/\/linkedin.com\/.*"
+                            placeholder="https://linkedin.com/..." name="linkedIn">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Imate administratorski kôd?</label>
+                        <input class="form-control" type="password" name="adminCode" placeholder="Admin kôd">
+                    </div>
+                    <div class="form-group mt-5">
+                        <button class="btn btn-custom btn-greenish-full btn-block" type="submit">Registracija</button>
+                    </div>
+                </form>
+                <div class="text-center">
+                    <a href="/campgrounds">Nazad na kampove</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<% include ./partials/footer-scripts-only %>

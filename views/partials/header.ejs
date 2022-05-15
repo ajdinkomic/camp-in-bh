@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Kampiraj u BiH</title>
+
+		<meta property="og:title" content="Kampiraj u BiH" />
+		<meta
+			property="og:description"
+			content="Kampiraj u BiH je aplikacija za istraživanje prelijepih kampova u Bosni i Hercegovini. Nudi mnogo kampova za pretragu, rezervaciju, ocjenjivanje i objavljivanje od strane korisnika."
+		/>
+		<meta property="og:image" content="https://images.unsplash.com/photo-1496080174650-637e3f22fa03?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60" />
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="Kampiraj u BiH" />
+		<meta property="og:url" content="https://kampirajubih.herokuapp.com/" />
+
+		<!-- Bootstrap 4 CSS -->
+		<link
+			rel="stylesheet"
+			href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+			integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+			crossorigin="anonymous"
+		/>
+		<!-- Font Awesome 5.11.2 -->
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css"
+			integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ="
+			crossorigin="anonymous"
+		/>
+		<!-- Google Fonts -->
+		<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,300i,400,700&display=swap&subset=latin-ext" rel="stylesheet" />
+		<!-- Mapbox GL CSS -->
+		<link href='https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css' rel='stylesheet' />
+		<!-- Flatpickr CSS -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+		<!-- Custom CSS -->
+		<link rel="stylesheet" href="/stylesheets/main.css" />
+	</head>
+
+	<body>
+		<nav class="navbar navbar-expand-lg fixed-top navbar-light bg-light">
+			<a class="navbar-brand my-1" href="/">Kampiraj u BiH</a>
+			<button
+				class="navbar-toggler"
+				type="button"
+				data-toggle="collapse"
+				data-target="#navbarSupportedContent"
+				aria-controls="navbarSupportedContent"
+				aria-expanded="false"
+				aria-label="Toggle navigation"
+			>
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item">
+						<a class="nav-link btn btn-custom btn-no-border ml-lg-2 my-1" href="/campgrounds">Početna</a>
+					</li>
+				</ul>
+				<ul class="navbar-nav ml-auto">
+					<% if(!currentUser){ %>
+					<li class="nav-item">
+						<a class="nav-link btn btn-custom btn-no-border ml-lg-2 my-1" href="/login">
+							<i class="fas fa-user mr-1"></i>
+							Prijava
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link btn btn-custom btn-no-border px-lg-3 ml-lg-2 my-1" href="/register">
+							<i class="fas fa-user-plus mr-1"></i>
+							Registracija
+						</a>
+					</li>
+					<% } else { %>
+
+					<!-- #region Messages -->
+					<!-- <li class="nav-item dropdown">
+						<a
+							class="nav-link dropdown-toggle btn btn-custom btn-no-border mx-lg-2 my-1"
+							href="#"
+							id="navbarDropdownMessage"
+							role="button"
+							data-toggle="dropdown"
+							aria-haspopup="true"
+							aria-expanded="false"
+							title="Messages"
+						>
+							<i class="fas fa-inbox"></i>
+							<sup><span class="badge <%if (unreadMessages.length >0) { %>badge-danger<% } %> rounded-circle"><%= unreadMessages.length %></span></sup>
+						</a>
+						<div class="dropdown-menu bg-light px-md-2" aria-labelledby="navbarDropdownMessage">
+							<% if(unreadMessages.length === 0){ %>
+							<p class="text-center"><em>No New Messages</em></p>
+							<% } %> <% unreadMessages.forEach(function(message){ %>
+							<a class="dropdown-item btn btn-custom btn-no-border" href="/messages/<%=message.id%>">
+								<em>New message from: 
+                                    <%message.sender%>
+                                </em>
+								.
+							</a>
+							<p class="text-right"><small><%=moment(message.createdAt).format('DD.MM.YYYY.')%></small></p>
+							<% }); %>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item btn btn-custom btn-no-border" href="/notifications">View all messages</a>
+						</div>
+					</li> -->
+					<!-- #endregion -->
+
+					<!-- #region Notifications -->
+					<li class="nav-item dropdown">
+						<a
+							class="nav-link dropdown-toggle btn btn-custom btn-no-border mx-lg-2 my-1"
+							href="#"
+							id="navbarDropdownNotification"
+							role="button"
+							data-toggle="dropdown"
+							aria-haspopup="true"
+							aria-expanded="false"
+							title="Obavijesti"
+						>
+							<i class="fas fa-bell"></i>
+							<sup><span class="badge <%if (unreadNotifications.length >0) { %>badge-danger<% } %> rounded-circle"><%= 2 %></span></sup>
+						</a>
+						<div class="dropdown-menu bg-light px-md-2" aria-labelledby="navbarDropdownNotification">
+							<% if(unreadNotifications.length === 0){ %>
+							<p class="text-center"><em>Nema novih obavijesti</em></p>
+							<% } %> <% unreadNotifications.slice(0,2).forEach(function(notification, index){ %>
+								<% if (index <=4) { %>
+								<a class="dropdown-item btn btn-custom btn-no-border" href="/notifications/<%=notification.id%>">
+									<em><%=notification.text%></em>
+								</a>
+								<p class="text-right"><small><%=moment(notification.createdAt).format('DD.MM.YYYY.')%></small></p>
+								<% } %>
+							<% }); %>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item btn btn-custom btn-no-border text-center" href="/notifications">Vidi sve obavijesti</a>
+						</div>
+					</li>
+					<!-- #endregion -->
+
+					<!-- #region Favorites -->
+					<li class="nav-item dropdown">
+						<a
+							class="nav-link dropdown-toggle btn btn-custom btn-no-border mx-lg-2 my-1"
+							href="#"
+							id="navbarDropdownFavorites"
+							role="button"
+							data-toggle="dropdown"
+							aria-haspopup="true"
+							aria-expanded="false"
+							title="Favoriti"
+						>
+							<i class="fas fa-heart"></i>
+							<sup><span class="badge rounded-circle"><%= favoriteCamps.length %></span></sup>
+						</a>
+						<div class="dropdown-menu bg-light px-md-2" aria-labelledby="navbarDropdownFavorites">
+							<% if(favoriteCamps.length === 0){ %>
+							<p class="text-center"><em>Nemate dodanih favorita</em></p>
+							<% } %> <% favoriteCamps.forEach(function(favoriteCamp, index){ %>
+								<% if (index <=4) { %>
+								<a class="dropdown-item btn btn-custom btn-no-border" href="/campgrounds/<%=favoriteCamp.slug%>">
+									<img src="<%= favoriteCamp.image %>" alt="<%= favoriteCamp.name %> slika." width="50" height="50" class="mr-2" />
+									<em><%=favoriteCamp.name%></em>
+								</a>
+								<% } %>
+							<% }); %>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item btn btn-custom btn-no-border text-center" href="/favorites">Vidi sve favorite</a>
+						</div>
+					</li>
+					<!-- #endregion -->
+
+					<!-- #region New campground -->
+					<li class="nav-item">
+						<a class="nav-link btn btn-custom px-lg-3 btn-no-border mr-lg-2 my-1" href="/campgrounds/new" title="Novi kamp"><i class="fas fa-plus"></i></a>
+					</li>
+					<!-- #endregion -->
+
+					<!-- #region User profile -->
+					<li class="nav-item dropdown">
+						<a
+							class="nav-link dropdown-toggle btn btn-custom btn-no-border mr-lg-2 my-1"
+							href="#"
+							id="navbarDropdown"
+							role="button"
+							data-toggle="dropdown"
+							aria-haspopup="true"
+							aria-expanded="false"
+						>
+							<% if(currentUser.profileImage) { %>
+							<img src="<%=currentUser.profileImage%>" class="user-profile-photo-nav mr-1" alt="<%= currentUser.username %> profilna slika." />
+							<% } else { %>
+							<i class="fas fa-user mr-1"></i>
+							<% } %> <%= currentUser.username %>
+						</a>
+						<div class="dropdown-menu user-dropdown bg-light px-2" aria-labelledby="navbarDropdown">
+							<a class="dropdown-item btn btn-custom btn-no-border" href="/users/<%=currentUser.username%>">
+								<i class="fas fa-id-card mr-1"></i>
+								Profil
+							</a>
+							<!-- <a class="dropdown-item btn btn-custom btn-no-border" href="#">
+								<i class="fas fa-user-edit mr-1"></i>
+								Edit profile information
+							</a> -->
+							<a class="dropdown-item btn btn-custom btn-no-border" href="/logout">
+								<i class="fas fa-sign-out-alt mr-1"></i>
+								Odjava
+							</a>
+							<!-- <div class="dropdown-divider"></div>
+							<a class="dropdown-item btn btn-custom btn-no-border" href="/campgrounds/new">
+								<i class="fas fa-plus mr-1"></i>
+								Novi kamp
+							</a> -->
+						</div>
+					</li>
+					<!-- #endregion -->
+					<% } %>
+				</ul>
+			</div>
+		</nav>
+
+		<div class="container-fluid flashalert text-center">
+			<div class="row justify-content-center">
+					<% if(errorMessage && errorMessage.length > 0){ %>
+					<!-- empty array isn't false so we need to make sure message does exist and it isn't an empty array (its length so must be > 0) -->
+					<div class="alert alert-danger w-100" role="alert"><%= errorMessage %></div>
+					<% } %> <% if(successMessage && successMessage.length > 0){ %>
+					<!-- empty array isn't false so we need to make sure message does exist and it isn't an empty array (its length so must be > 0) -->
+					<div class="alert alert-success w-100" role="alert"><%= successMessage %></div>
+					<% } %>
+			</div>
+		</div>
+	</body>
+</html>

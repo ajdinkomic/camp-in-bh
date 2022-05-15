@@ -1,0 +1,31 @@
+<% include ./partials/header %>
+<section id="reset-page-section">
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-md-12 text-center mt-5">
+                <h1>Promjena lozinke</h1>
+            </div>
+            <div class="col-lg-8 offset-lg-2 mt-5">
+                <form action="/reset/<%= token %>" method="POST">
+                    <div class="form-group">
+                        <label for="password">Nova lozinka</label>
+                        <input type="password" name="password" value="" id="password" placeholder="Nova lozinka"
+                            class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm">Potvrda lozinke</label>
+                        <input type="password" name="confirm" value="" id="confirm" placeholder="Potvrda lozinke"
+                            class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-custom btn-greenish-full btn-block" type="submit">Promjena lozinke</button>
+                    </div>
+                </form>
+                <div class="text-center">
+                    <a href="/campgrounds">Nazad na kampove</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<% include ./partials/footer-scripts-only %>

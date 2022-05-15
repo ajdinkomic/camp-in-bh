@@ -1,0 +1,207 @@
+<% include ../partials/header %>
+<section id="user-profile-section">
+    <div class="container pb-4 bg-white">
+        <div class="row align-items-center">
+            <div class="col-md-4 text-center user-info">
+
+                <% if(user.profileImage) { %>
+                <img src="<%=user.profileImage%>" alt="<%= user.username %> profilna slika.">
+                <% } else { %>
+                <div class="user-icon-wrapper text-center m-auto">
+                    <i class="fas fa-user fa-5x p-3"></i>
+                </div>
+                <% } %>
+
+                <h3 class="mt-2"><%=user.firstName + " " + user.lastName%></h3>
+
+                <ul class="user-links p-0">
+                    <% if(user.facebook !== "") { %>
+                    <a href="<%= user.facebook %>" class="mx-1" target="_blank">
+                        <i class="fab fa-2x fa-facebook-square" aria-hidden="true"></i>
+                    </a>
+                    <% } %>
+                    <% if(user.youtube !== "") { %>
+                    <a href="<%= user.youtube %>" class="mx-1" target="_blank">
+                        <i class="fab fa-2x fa-youtube-square" aria-hidden="true"></i>
+                    </a>
+                    <% } %>
+                    <% if(user.twitter !== "") { %>
+                    <a href="<%= user.twitter %>" class="mx-1" target="_blank">
+                        <i class="fab fa-2x fa-twitter-square" aria-hidden="true"></i>
+                    </a>
+                    <% } %>
+                    <% if(user.linkedIn !== "") { %>
+                    <a href="<%= user.linkedIn %>" class="mx-1" target="_blank">
+                        <i class="fab fa-2x fa-linkedin" aria-hidden="true"></i>
+                    </a>
+                    <% } %>
+                </ul>
+
+                <p>Kampovi: <%= campgrounds.length %></p>
+                <p>Recenzije: <%= reviews.length %></p>
+                <p>Pratitelji: <%= followers.length %></p>
+
+                <% if(user.shareEmail) { %>
+                <div class="mt-2">
+                    <a href="mailto:<%= user.email %>">
+                        <small><%= user.email %></small>
+                    </a>
+                </div>
+                <% } %>
+
+                <% 
+                if(currentUser){
+                    var isFollower = false;
+                    for(const follower of user.followers){
+                        if(follower.equals(currentUser._id)){
+                            isFollower = true;
+                        }    
+                    }
+                }     
+                %>
+                <% if(currentUser && (currentUser.username !== user.username) && !isFollower) { %>
+                <a href="/follow/<%= user.username %>" class="btn btn-custom btn-greenish-full mt-3">
+                    Zaprati <%= user.username %>
+                </a>
+                <% } %>
+                <% if(currentUser && (currentUser.username !== user.username) && isFollower) { %>
+                <a href="/unfollow/<%= user.username %>" class="btn btn-secondary mt-3">
+                    Otprati <%= user.username %>
+                </a>
+                <% } %>
+
+
+                <!-- Send user a message -->
+                <!-- <% if(currentUser && (currentUser.username !== user.username)) { %>
+                <a class="btn btn-custom btn-greenish-full mt-3" data-toggle="collapse" href="#messageCollapse" role="button" aria-expanded="false" aria-controls="messageCollapse">
+                    <i class="fas fa-inbox mr-1"></i>Send message
+                </a>
+                <div class="collapse mt-2" id="messageCollapse">
+                    <div class="card card-body">
+                        <form action="/message/<%= user.username %>" method="post">
+                            <div class="form-group text-left">
+                            <label for="messageBody"><strong>Message</strong></label>
+                            <textarea name="messageBody" id="messageBody" cols="30" rows="10" class="form-control" placeholder="Type your message here..."></textarea>
+                            </div>
+                            <input type="submit" class="btn btn-custom btn-greenish-full mt-3" value="Send"/>
+                        </form>
+                    </div>
+                </div>
+                <% } %> -->
+
+            </div>
+            <div class="col-md-8 user-camps-wrapper mt-3 mt-md-0 text-center">
+                <h4>Kampovi korisnika</h4>
+                <div id="user-carousel">
+                    <% if (campgrounds.length > 0) { %>
+                    <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
+                        <div class="carousel-inner">
+                            <div class="carousel-item active" data-interval="false">
+                                <div class="card mx-auto my-2">
+                                    <a href="/campgrounds/<%= campgrounds[0].slug %>"><img
+                                            src="<%= campgrounds[0].image %>" class="card-img-top"
+                                            alt="<%=campgrounds[0].name%> slika."></a>
+                                    <div class="card-body">
+                                        <h5 class="card-title"><%= campgrounds[0].name.substring(0,40) %></h5>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item border-top-0" title="Opis">
+                                                <p class="card-text"><i
+                                                        class="fas fa-info-circle mr-1"></i><%= campgrounds[0].description.substring(0,40)+"..." %>
+                                                </p>
+                                            </li>
+                                            <li class="list-group-item" title="Datum objavljivanja">
+                                                <i class="fas fa-calendar-day mr-1"></i><%= moment(campgrounds[0].createdAt).format('DD.MM.YYYY.') %>
+                                            </li>
+                                        </ul>
+
+                                        <% if (campgrounds[0].rating === 0) { %>
+                                        <div class="card-text text-center pt-4 mb-1"><em>Nema recenzija</em></div>
+                                        <% } else { %>
+                                        <p class="card-text text-center pt-4 mb-1">
+                                            <span class="fas fa-star checked-star"></span>
+                                            <span
+                                                class="fas fa-star <% if (campgrounds[0].rating >= 1.5) { %> checked-star <% } %>"></span>
+                                            <span
+                                                class="fas fa-star <% if (campgrounds[0].rating >= 2.5) { %> checked-star <% } %>"></span>
+                                            <span
+                                                class="fas fa-star <% if (campgrounds[0].rating >= 3.5) { %> checked-star <% } %>"></span>
+                                            <span
+                                                class="fas fa-star <% if (campgrounds[0].rating >= 4.5) { %> checked-star <% } %>"></span>
+                                            <em>(<%= campgrounds[0].reviews.length %>)</em>
+                                        </p>
+                                        <% } %>
+                                        <div class="text-center">
+                                            <a href="/campgrounds/<%= campgrounds[0].slug %>"
+                                                class="btn btn-custom btn-greenish-full mt-1">
+                                                Više informacija
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <% for(var i = 1; i < campgrounds.length; i++){ %>
+                            <div class="carousel-item" data-interval="false">
+                                <div class="card mx-auto my-2">
+                                    <a href="/campgrounds/<%= campgrounds[i].slug %>"><img
+                                            src="<%= campgrounds[i].image %>" class="card-img-top"
+                                            alt="<%=campgrounds[i].name%> slika."></a>
+                                    <div class="card-body">
+                                        <h5 class="card-title"><%= campgrounds[i].name.substring(0,40) %></h5>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item border-top-0" title="Opis">
+                                                <p class="card-text"><i
+                                                        class="fas fa-info-circle mr-1"></i><%= campgrounds[i].description.substring(0,40)+"..." %>
+                                                </p>
+                                            </li>
+                                            <li class="list-group-item" title="Datum objavljivanja">
+                                                <i class="fas fa-calendar-day mr-1"></i><%= moment(campgrounds[i].createdAt).format('DD.MM.YYYY.') %>
+                                            </li>
+                                        </ul>
+
+                                        <% if (campgrounds[i].rating === 0) { %>
+                                        <div class="card-text text-center pt-4 mb-1"><em>Nema recenzija</em></div>
+                                        <% } else { %>
+                                        <p class="card-text text-center pt-4 mb-1">
+                                            <span class="fas fa-star checked-star"></span>
+                                            <span
+                                                class="fas fa-star <% if (campgrounds[i].rating >= 1.5) { %> checked-star <% } %>"></span>
+                                            <span
+                                                class="fas fa-star <% if (campgrounds[i].rating >= 2.5) { %> checked-star <% } %>"></span>
+                                            <span
+                                                class="fas fa-star <% if (campgrounds[i].rating >= 3.5) { %> checked-star <% } %>"></span>
+                                            <span
+                                                class="fas fa-star <% if (campgrounds[i].rating >= 4.5) { %> checked-star <% } %>"></span>
+                                            <em>(<%= campgrounds[i].reviews.length %>)</em>
+                                        </p>
+                                        <% } %>
+                                        <div class="text-center">
+                                            <a href="/campgrounds/<%= campgrounds[i].slug %>"
+                                                class="btn btn-custom btn-greenish-full mt-1">
+                                                Više informacija
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+                        </div>
+                        <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button"
+                            data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Prethodni</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carouselExampleCaptions" role="button"
+                            data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Sljedeći</span>
+                        </a>
+                    </div>
+                    <% } else {%>
+                    <h5><em>Korisnik nema objavljenih kampova</em></h5>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<% include ../partials/footer-scripts-only %>

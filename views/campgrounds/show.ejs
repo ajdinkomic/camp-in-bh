@@ -1,0 +1,236 @@
+<% include ../partials/header %>
+<section id="show-campground-info-section">
+    <div class="container pt-5">
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <div class="card mt-5 show-campground-card">
+                    <img src="<%= campground.image %>" class="card-img-top" alt="<%=campground.name%> slika.">
+                    <div class="card-body">
+                        <h5 class="card-text float-right price"><%= campground.price %> KM</h5>
+                        <h3 class="card-title"><%= campground.name %></h3>
+                        <% if (campground.rating === 0) { %>
+                        <p class="card-text">
+                            <em>Nema recenzija</em>
+                        </p>
+                        <% } else { %>
+                        <p class="card-title" title="Trenutna ocjena kampa: <%= campground.rating.toFixed(2) %>">
+                            <span class="fas fa-star checked-star"></span>
+                            <span class="fas fa-star <% if (campground.rating >= 1.5) { %> checked-star <% } %>"></span>
+                            <span class="fas fa-star <% if (campground.rating >= 2.5) { %> checked-star <% } %>"></span>
+                            <span class="fas fa-star <% if (campground.rating >= 3.5) { %> checked-star <% } %>"></span>
+                            <span class="fas fa-star <% if (campground.rating >= 4.5) { %> checked-star <% } %>"></span>
+                            <strong class="mx-1"><%= campground.rating.toFixed(2) %></strong>
+                            <small title="Ukupan broj recenzija"><em>(recenzija: <%= campground.reviews.length %>)</em></small>
+                        </p>
+                        <% } %>
+                        <hr style="margin-top: 0;">
+
+                        <p class="card-text"><strong>Opis</strong></p>
+                        <p class="card-text mb-5"><%= campground.description %></p>
+                        <p class="card-text float-right">
+                            <small>
+                                    <strong>
+                                        <a href="/users/<%=campground.author.username%>"><%= campground.author.username %></a>
+                                    </strong>,
+                                    <%= moment(campground.createdAt).format('DD.MM.YYYY.') %>
+                            </small>
+                        </p>
+
+                        <% if(currentUser && campground.author.id.equals(currentUser._id) || currentUser && currentUser.isAdmin) { %>
+                        <a href="/campgrounds/<%=campground.slug%>/edit" class="btn btn-sm btn-warning" title="Uredi"><i class="fas fa-pen"></i></a>
+                        <form action="/campgrounds/<%=campground.slug%>?_method=DELETE" method="POST" class="d-inline">
+                            <button class="btn btn-sm btn-danger" type="submit" title="Obriši"><i class="fas fa-trash"></i></button>
+                        </form>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <div class="booking-card">
+                    <div class="row mb-2">
+                        <div class="col-12">
+                            <h4>Rezervacija</h4>
+                        </div>
+                    </div>
+                    <% if (currentUser) { %>
+                        <form action="/campgrounds/create-checkout-session?campgroundName=<%= campground.name %>&campgroundId=<%= campground._id %>&campgroundSlug=<%= campground.slug %>&price=<%= campground.price %>&campgroundSlug=<%= campground.slug %>" method="POST" class="row">
+                            <div class="col-4">
+                                <i class="fas fa-calendar-alt text-success mr-1"></i>
+                                <span>Datum od</span>
+                                <input type="text" id="dateFrom" class="form-control date-selection bg-white mt-1" name="dateFrom" placeholder="<%= moment(new Date()).format('DD.MM.YYYY.') %>" required>
+                            </div>
+                            <div class="col-4">
+                                <i class="fas fa-calendar-alt text-success mr-1"></i>
+                                <span>Datum do</span>
+                                <input type="text" id="dateTo" class="form-control date-selection bg-white mt-1" name="dateTo" placeholder="<%= moment(new Date()).add(1, 'd').format('DD.MM.YYYY.') %>" required>
+                            </div>
+                            <div class="col-4">
+                                <i class="fas fa-calendar-alt text-success mr-1"></i>
+                                <span>Broj osoba</span>
+                                <input type="number" id="personsNumber" class="form-control bg-white mt-1" name="personsNumber" min="1" placeholder="4" required>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <button type="submit" class="btn btn-block btn-success">Rezerviši</button>
+                            </div>
+                        </form>
+
+                        <div class="row mt-5">
+                            <div class="col-12">
+                                <h6>Kreirane rezervacije</h6>
+                            </div>
+                            <div class="col-12">
+                                <% for (const reservation of campground.userReservations) { %>
+                                    <div class="card mt-2 <%= reservation.isCanceled ? 'canceled' : '' %>">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-4"><p><small><strong>Datum od:</strong> <%= moment(reservation.dateFrom).format('DD.MM.YYYY.') %></small></p></div>
+                                                <div class="col-4"><p><small><strong>Datum do:</strong> <%= moment(reservation.dateTo).format('DD.MM.YYYY.') %></small></p></div>
+                                                <div class="col-4"><p><small><strong>Broj noćenja:</strong> <%= reservation.numberOfNights %></small></p></div>
+                                                <div class="col-4"><p><small><strong>Broj osoba:</strong> <%= reservation.numberOfPersons %></small></p></div>
+                                                <div class="col-4"><p><small><strong>Datum kreiranja:</strong> <%= moment(reservation.createdAt).format('DD.MM.YYYY. HH:mm') %></small></p></div>
+                                                <div class="col-4"><p><small><strong>Cijena:</strong> <%= reservation.price %> KM</small></p></div>
+                                                <div class="col-12 text-right">
+                                                    <% if (reservation.isCanceled) { %>
+                                                        <p class="text-danger"><small><strong>Rezervacija otkazana</strong></small></p>    
+                                                    <% } else { %>
+                                                        <a href="/reservation/cancel/<%= reservation._id %>" class="btn btn-danger"><small><strong>Otkaži</strong></small></a>
+                                                    <% } %>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <div class="row">
+                            <div class="col-12 text-center">
+                                <p>Da biste mogli provjeriti slobodne datume i rezervisati kamp, morate biti prijavljeni!</p>
+                                <a href="/login" class="btn btn-custom btn-greenish-full">Prijava</a>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mapbox -->
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <div id="map"></div>
+            </div>
+        </div>
+
+        <!-- Reviews-->
+        <div class="row">
+            <div class="col-md-12 mb-5">
+                <div class="card">
+                    <div class="card-body">
+
+                        <h4 class="card-text">
+                            Posljednje recenzije
+                        </h4>
+                        <hr style="margin-top: 0;">
+
+                        <% for (const review of campground.reviews.slice(0,5)){ %>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <small><%- '<span class="fas fa-star checked-star"></span>'.repeat(review.rating)%><%- '<span class="fas fa-star"></span>'.repeat(5 - review.rating) %></small>
+                                <div class="card-text">
+                                    <strong><%= review.author.username %></strong>
+                                </div>
+                                <div class="card-text">
+                                    <small><%= moment(review.updatedAt).format('DD.MM.YYYY.') %></small>
+                                </div>
+                                <% if((currentUser && review.author.id.equals(currentUser._id)) || (currentUser && currentUser.isAdmin)){ %>
+                                <a class="btn btn-sm btn-warning mt-2"
+                                    href="/campgrounds/<%=campground.slug %>/reviews/<%=review.id %>/edit" title="Uredi"><i class="fas fa-pen"></i></a>
+                                <form id="delete-form"
+                                    action="/campgrounds/<%=campground.slug %>/reviews/<%=review.id %>?_method=DELETE"
+                                    method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-danger mt-2" title="Obriši"><i class="fas fa-trash"></i></button>
+                                </form>
+                                <% } %>
+                            </div>
+                            <div class="col-md-9">
+                                <p class="card-text mt-3" style="word-wrap: break-word;">
+                                    <%= review.text %>
+                                </p>
+                            </div>
+                        </div>
+                        <hr>
+                        <% } %>
+                        <a href="/campgrounds/<%=campground.slug%>/reviews/new" class="btn btn-custom btn-greenish-full d-block <% if((currentUser && campground.reviews.some(function(review){ return review.author.id.equals(currentUser.id) })) || (currentUser && currentUser.username === campground.author.username)) { %> disabled <% } %>">Nova recenzija</a>
+                        <div class="mt-3">
+                            <a href="/campgrounds/<%= campground.slug %>/reviews" class="mt-3">Vidi sve recenzije</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Mapbox config -->
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+<script>
+    mapboxgl.accessToken = '<%= process.env.MAPBOX_ACCESS_TOKEN %>';
+    const map = new mapboxgl.Map({
+        container: 'map', // container ID
+        style: 'mapbox://styles/mapbox/light-v10', // style URL
+        center: [
+            <%= campground.lng %>,
+            <%= campground.lat %>
+        ], // starting position [lng, lat]
+        zoom: 14 // starting zoom
+    });
+
+    // Create a default Marker, rotated 45 degrees.
+    const marker = new mapboxgl.Marker({ rotation: 45 })
+        .setLngLat([
+            <%= campground.lng %>,
+            <%= campground.lat %>
+        ])
+        .addTo(map);
+</script>
+
+<!-- Flatpickr (Date picker library) config -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/l10n/bs.min.js" integrity="sha512-jgAyN11iLVczRmaAhWH0g5VaxG+ff+LA2HRtUM5c20lIUIAdVU2Y27Mj5HDkvCRbpzK21y1YjTw6BzznZ4G1rQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    
+    const fpDateTo = flatpickr("#dateTo", {
+        altInput: true,
+        altFormat: "d.m.Y.",
+        dateFormat: "Y-m-d",
+        locale: "bs",
+        allowInput: true,
+        disable: <%- JSON.stringify(campground.reservedDates) %>,
+        minDate: new Date().fp_incr(1),
+
+        onReady: function(selectedDates, dateStr, instance) {
+            instance._input.setAttribute("disabled", "disabled");
+        },
+    });
+
+    const fpDateFrom = flatpickr("#dateFrom", {
+        altInput: true,
+        altFormat: "d.m.Y.",
+        dateFormat: "Y-m-d",
+        locale: "bs",
+        allowInput: true,
+        disable: <%- JSON.stringify(campground.reservedDates) %>,
+        minDate: "today",
+
+        onChange: function(selectedDates, dateStr, instance) {
+            fpDateTo._input.removeAttribute("disabled");
+            fpDateTo.set("minDate", new Date(dateStr).fp_incr(1));
+            fpDateTo.setDate(new Date(dateStr).fp_incr(1));
+        },
+    });
+  </script>
+
+<% include ../partials/footer %>

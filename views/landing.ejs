@@ -1,0 +1,71 @@
+<% include ./partials/header %>
+
+<header id="landing-header">
+  <div class="container-fluid">
+    <div class="row justify-content-center align-items-center m-0 text-center">
+      <div class="col-md-12">
+        <h1 class="mb-4">Kampiraj u BiH</h1>
+        <p class="mb-4">Vaša sljedeća <span class="adventure">avantura</span> počinje ovdje</p>
+        <a href="/campgrounds" class="btn btn-custom btn-lg btn-fill">Svi kampovi</a>
+        <a href="/register" class="btn btn-custom btn-lg btn-greenish-full">Registracija</a>
+      </div>
+    </div>
+</header>
+
+<section id="landing-content">
+  <div class="container">
+    <div class="row frame-row bg-white justify-content-center">
+      <div class="col-md-9 text-center">
+        <h2>Dobrodošli na Kampiraj u BiH, pravo mjesto za pronalazak Vašeg idealnog kampa</h2>
+        <p>Pridružite se našoj zajednici, objavite Vaš kamp, ostavljajte recenzije na druge kampove ili pregledajte kampove bez registracije</p>
+        <a href="/campgrounds" class="btn btn-custom btn-lg btn-start btn-greenish-full">Pregled kampova</a>
+      </div>
+    </div>
+    <div class="row frame-row bg-white justify-content-center mt-5">
+      <div class="col-md-10 text-center">
+        <div class="container-fluid">
+          <div class="row py-5 landing-icons-row">
+            <div class="col-md-6 p-4 p-md-5"><i class="fas fa-2x fa-campground"></i>
+              <div class="number my-3">
+                <h1><%= campCount %></h1>
+              </div>
+              <h6>KAMPOVA</h6>
+            </div>
+            <div class="col-md-6 p-4 p-md-5"><i class="fas fa-2x fa-user"></i>
+              <div class="number my-3">
+                <h1><%= userCount %></h1>
+              </div>
+              <h6>KORISNIKA</h6>
+            </div>
+            <div class="col-md-6 p-4 p-md-5"><i class="fas fa-2x fa-comments"></i>
+              <div class="number my-3">
+                <h1><%= reviewCount %></h1>
+              </div>
+              <h6>RECENZIJA</h6>
+            </div>
+            <div class="col-md-6 p-4 p-md-5"><i class="fas fa-2x fa-user-plus"></i>
+              <div class="number my-3">
+                <h1>1M+</h1>
+              </div>
+              <h6>RAZLOGA DA SE PRIDRUŽITE</h6>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="sign-up-section">
+  <div class="container-fluid py-5">
+    <div class="row m-0 justify-content-center align-items-center">
+      <div class="col-md-12 text-center">
+        <h2>REGISTRUJTE SE DANAS</h2>
+        <p class="my-3">Počnite objavljivati kampove, ostavljati recenzije i učinite Vaš sljedeći odmor nezaboravnim</p>
+        <a href="/register" class="btn btn-custom btn-lg btn-greenish-full">Registracija</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<% include ./partials/footer %>
